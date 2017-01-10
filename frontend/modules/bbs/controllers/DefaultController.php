@@ -5,6 +5,7 @@ namespace app\modules\bbs\controllers;
 use app\models\BbsForum;
 use app\models\BbsForumQuery;
 use yii\data\Pagination;
+use yii\helpers\Json;
 use yii\web\Controller;
 
 /**
@@ -21,9 +22,9 @@ class DefaultController extends Controller
         $model = new BbsForum();
         $query = $model::find()->where(['isshow'=>1]);
         $count = $query->count();
-        $page = new Pagination(['totalCount'=>$count,'defaultPageSize'=>2]);
+        $page = new Pagination(['totalCount'=>$count,'defaultPageSize'=>20]);
         $result = $query->offset($page->offset)->limit($page->limit)->asArray()->all();
-        echo $page->createUrl(2);
-        var_dump($result);
+        return  Json::encode($result);
+
     }
 }
