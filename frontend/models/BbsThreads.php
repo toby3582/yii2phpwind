@@ -108,4 +108,12 @@ class BbsThreads extends \yii\db\ActiveRecord
             'thread_status' => 'Thread Status',
         ];
     }
+
+    public function getUser(){
+        return $this->hasOne(User::className(),['uid'=>'created_userid']);
+    }
+
+    public function getForum(){
+        return $this->hasOne(BbsForum::className(),['fid'=>'fid']);
+    }
 }

@@ -7,6 +7,7 @@ use app\models\BbsThreadsContent;
 use yii\data\Pagination;
 use yii\helpers\Json;
 use yii\web\Controller;
+use yii\web\Request;
 
 class ThreadController extends Controller
 {
@@ -16,13 +17,20 @@ class ThreadController extends Controller
      */
     public function actionIndex()
     {
+        $request = \Yii::$app->request;
+        $page = $request->get('page');
+        if(!$page){
+            $page = 1;
+        }
+        $limit = 10;
+        $ofset = $page*10;
         $model = new BbsThreads();
         $query = $model::find()->where(['disabled'=>0]);
+        $query->joinWith('user',false)->joinWith('forum',false)->select('qc_bbs_threads.*,qc_user.username,qc_bbs_forum.name as fname');
         $count = $query->count();
-        $page = new Pagination(['totalCount'=>$count,'defaultPageSize'=>20]);
-        $result = $query->offset($page->offset)->limit($page->limit)->asArray()->all();
+        $result = $query->offset($ofset)->limit($limit)->orderBy('qc_bbs_threads.tid desc')->asArray()->all();
+//        echo $query->createCommand()->sql;
         return  Json::encode($result);
-
     }
 
     /**
